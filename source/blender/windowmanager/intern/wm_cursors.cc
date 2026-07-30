@@ -83,17 +83,83 @@ struct BCursor {
  */
 static BCursor g_cursors[WM_CURSOR_NUM] = {{nullptr}};
 
+static GHOST_TStandardCursor window_get_custom_cursor(const int cursor)
+{
+  if (cursor == 1) {
+    return GHOST_kStandardCursorCross;
+  }
+  else if (cursor == 2) {
+    return GHOST_kStandardCursorPointer;
+  }
+  // crossopen
+  else if (cursor == 3) {
+    return GHOST_kStandardCursorCrossOpen;
+  }
+  // crossdot
+  else if (cursor == 4) {
+    return GHOST_kStandardCursorCrossDot;
+  }
+  // crossmin
+  else if (cursor == 5) {
+    return GHOST_kStandardCursorCrossMin;
+  }
+  else if (cursor == 6) {
+    return GHOST_kStandardCursorBox;
+  }
+  else if (cursor == 7) {
+    return GHOST_kStandardCursorBoxDot;
+  }
+  else if (cursor == 8) {
+    return GHOST_kStandardCursorBoxPointer;
+  }
+  // dot
+  else if (cursor == 9) {
+    return GHOST_kStandardCursorDot;
+  }
+  else if (cursor == 10) {
+    return GHOST_kStandardCursorBlank;
+  }
+  else if (cursor == 11) {
+    return GHOST_kStandardCursorKnife;
+  }
+  else if (cursor == 12) {
+    return GHOST_kStandardCursorPencil;
+  }
+  else if (cursor == 13) {
+    return GHOST_kStandardCursorEraser;
+  }
+  else if (cursor == 14) {
+    return GHOST_kStandardCursorEyedropper;
+  }
+  else {
+    return GHOST_kStandardCursorDefault;
+  }
+}
+
 /** Blender cursor to GHOST standard cursor conversion. */
 static GHOST_TStandardCursor convert_to_ghost_standard_cursor(wmCursorType curs)
 {
+  GHOST_TStandardCursor cursor = GHOST_kStandardCursorDefault;
   switch (curs) {
     case WM_CURSOR_DEFAULT:
-      return GHOST_kStandardCursorDefault;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.system_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorDefault;
+      }
     case WM_CURSOR_WAIT:
       return GHOST_kStandardCursorWait;
     case WM_CURSOR_EDIT:
     case WM_CURSOR_CROSS:
-      return GHOST_kStandardCursorCrosshair;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.edit_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorCrosshair;
+      }
     case WM_CURSOR_MOVE:
       return GHOST_kStandardCursorMove;
     case WM_CURSOR_X_MOVE:
@@ -115,7 +181,13 @@ static GHOST_TStandardCursor convert_to_ghost_standard_cursor(wmCursorType curs)
     case WM_CURSOR_STOP:
       return GHOST_kStandardCursorStop;
     case WM_CURSOR_KNIFE:
-      return GHOST_kStandardCursorKnife;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.knife_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorKnife;
+      }
     case WM_CURSOR_NSEW_SCROLL:
       return GHOST_kStandardCursorNSEWScroll;
     case WM_CURSOR_NS_SCROLL:
@@ -123,19 +195,43 @@ static GHOST_TStandardCursor convert_to_ghost_standard_cursor(wmCursorType curs)
     case WM_CURSOR_EW_SCROLL:
       return GHOST_kStandardCursorEWScroll;
     case WM_CURSOR_EYEDROPPER:
-      return GHOST_kStandardCursorEyedropper;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.eyedropper_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorEyedropper;
+      }
     case WM_CURSOR_N_ARROW:
       return GHOST_kStandardCursorUpArrow;
     case WM_CURSOR_S_ARROW:
       return GHOST_kStandardCursorDownArrow;
     case WM_CURSOR_PAINT:
-      return GHOST_kStandardCursorCrosshairA;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.paint_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorCrosshairA;
+      }
     case WM_CURSOR_DOT:
-      return GHOST_kStandardCursorCrosshairB;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.dot_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorCrosshairB;
+      }
     case WM_CURSOR_CROSSC:
       return GHOST_kStandardCursorCrosshairC;
     case WM_CURSOR_ERASER:
-      return GHOST_kStandardCursorEraser;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.eraser_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorEraser;
+      }
     case WM_CURSOR_ZOOM_IN:
       return GHOST_kStandardCursorZoomIn;
     case WM_CURSOR_ZOOM_OUT:
@@ -143,7 +239,13 @@ static GHOST_TStandardCursor convert_to_ghost_standard_cursor(wmCursorType curs)
     case WM_CURSOR_TEXT_EDIT:
       return GHOST_kStandardCursorText;
     case WM_CURSOR_PAINT_BRUSH:
-      return GHOST_kStandardCursorPencil;
+      if (U.custom_cursor) {
+        cursor = window_get_custom_cursor(U.pencil_cursor);
+        return cursor;
+      }
+      else {
+        return GHOST_kStandardCursorPencil;
+      }
     case WM_CURSOR_E_ARROW:
       return GHOST_kStandardCursorRightArrow;
     case WM_CURSOR_W_ARROW:

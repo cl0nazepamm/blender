@@ -344,6 +344,7 @@ enum eView3DOverlay_EditFlag : int {
 
   V3D_OVERLAY_EDIT_CU_NORMALS = (1 << 21),
   V3D_OVERLAY_EDIT_CONSTANT_SCREEN_SIZE_NORMALS = (1 << 22),
+  V3D_OVERLAY_EDIT_FACE_DOT_XRAY = (1 << 23),
 };
 ENUM_OPERATORS(eView3DOverlay_EditFlag)
 

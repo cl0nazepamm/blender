@@ -12,6 +12,18 @@
 APPICON ICON DISCARDABLE "winblender.ico"
 BLENDERFILE ICON DISCARDABLE "winblenderfile.ico"
 
+
+blank_cursor CURSOR "cursors/blank.cur"
+box_cursor CURSOR "cursors/box.cur"
+boxDot_cursor CURSOR "cursors/boxDot.cur"
+boxPointer_cursor CURSOR "cursors/boxPointer.cur"
+cross_cursor CURSOR "cursors/cross.cur"
+crossDot_cursor CURSOR "cursors/crossDot.cur"
+crossMin_cursor CURSOR "cursors/crossMin.cur"
+crossOpen_cursor CURSOR "cursors/crossOpen.cur"
+dot_cursor CURSOR "cursors/dot.cur"
+pointer_cursor CURSOR "cursors/pointer.cur"
+
 IDR_VERSION1 VERSIONINFO
 FILEVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
 PRODUCTVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4

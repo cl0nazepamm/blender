@@ -1505,6 +1505,8 @@ void blo_do_versions_userdef(UserDef *userdef)
         STRNCPY(km.idname, "NLA Tracks");
       }
     }
+
+    userdef->selection_radius = 75.0f;
   }
 
   if (!USER_VERSION_ATLEAST(402, 36)) {

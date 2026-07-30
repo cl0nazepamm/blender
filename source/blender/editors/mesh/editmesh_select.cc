@@ -411,7 +411,9 @@ static void findnearestvert__doClosest(void *user_data,
 
   dist_test = dist_test_bias = len_manhattan_v2v2(data->mval_fl, screen_co);
 
-  if (data->use_select_bias && BM_elem_flag_test(eve, BM_ELEM_SELECT)) {
+  if (!(U.adjustable_click_select && U.select_unbiased) && data->use_select_bias &&
+      BM_elem_flag_test(eve, BM_ELEM_SELECT))
+  {
     dist_test_bias += FIND_NEAR_SELECT_BIAS;
   }
 
@@ -621,7 +623,9 @@ static void find_nearest_edge__doClosest(void *user_data,
 
   dist_test = dist_test_bias = len_manhattan_v2v2(data->mval_fl, screen_co);
 
-  if (data->use_select_bias && BM_elem_flag_test(eed, BM_ELEM_SELECT)) {
+  if (!(U.adjustable_click_select && U.select_unbiased) && data->use_select_bias &&
+      BM_elem_flag_test(eed, BM_ELEM_SELECT))
+  {
     dist_test_bias += FIND_NEAR_SELECT_BIAS;
   }
 
@@ -853,7 +857,9 @@ static void findnearestface__doClosest(void *user_data,
 
   dist_test = dist_test_bias = len_manhattan_v2v2(data->mval_fl, screen_co);
 
-  if (data->use_select_bias && BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
+  if (!(U.adjustable_click_select && U.select_unbiased) && data->use_select_bias &&
+      BM_elem_flag_test(efa, BM_ELEM_SELECT))
+  {
     dist_test_bias += FIND_NEAR_SELECT_BIAS;
   }
 
@@ -889,27 +895,27 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
   uint base_index = 0;
 
   if (!XRAY_FLAG_ENABLED(vc->v3d)) {
-    float dist_test;
+    float dist_test = 0.0f;
     uint index;
     BMFace *efa;
+    uint dist_px_manhattan_test = 0;
 
     {
-      uint dist_px_manhattan_test = 0;
-      if (*dist_px_manhattan_p != 0.0f && (use_zbuf_single_px == false)) {
-        dist_px_manhattan_test = uint(
-            ED_view3d_backbuf_sample_size_clamp(vc->region, *dist_px_manhattan_p));
+      if (U.adjustable_click_select ||
+          *dist_px_manhattan_p != 0.0f && (use_zbuf_single_px == false))
+      {
+        dist_px_manhattan_test = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region,
+                                                                           *dist_px_manhattan_p);
       }
 
       DRW_select_buffer_context_create(vc->depsgraph, bases, SCE_SELECT_FACE);
 
-      if (dist_px_manhattan_test == 0) {
+      if (!(U.adjustable_click_select) && dist_px_manhattan_test == 0) {
         index = DRW_select_buffer_sample_point(vc->depsgraph, vc->region, vc->v3d, vc->mval);
-        dist_test = 0.0f;
       }
       else {
         index = DRW_select_buffer_find_nearest_to_point(
             vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px_manhattan_test);
-        dist_test = dist_px_manhattan_test;
       }
 
       if (index) {
@@ -943,7 +949,14 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
     /* End exception. */
 
     if (efa) {
-      if (dist_test < *dist_px_manhattan_p) {
+      if (U.adjustable_click_select && dist_px_manhattan_test < *dist_px_manhattan_p) {
+        if (r_base_index) {
+          *r_base_index = base_index;
+        }
+        *dist_px_manhattan_p = dist_px_manhattan_test;
+        return efa;
+      }
+      else if (!U.adjustable_click_select && dist_test < *dist_px_manhattan_p) {
         if (r_base_index) {
           *r_base_index = base_index;
         }

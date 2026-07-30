@@ -1466,6 +1466,14 @@ wmOperatorStatus WM_operator_repeat(bContext *C, wmOperator *op)
   op->flag &= ~op_flag;
   return ret;
 }
+
+wmOperatorStatus WM_operator_invoke_last(bContext *C, wmOperator *op)
+{
+  const wmOperatorStatus ret = WM_operator_name_call_ptr(
+      C, op->type, blender::wm::OpCallContext::InvokeDefault, nullptr, nullptr);
+  return ret;
+}
+
 wmOperatorStatus WM_operator_repeat_last(bContext *C, wmOperator *op)
 {
   const eOperator_Flag op_flag = OP_IS_REPEAT_LAST;

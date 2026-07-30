@@ -2200,13 +2200,13 @@ static bool rcti_in_lasso(const rcti rect, const Span<int2> mcoords)
   BLI_lasso_boundbox(&lasso_rect, mcoords);
   /* Check if edge of strip is in the lasso. */
   if (BLI_lasso_is_edge_inside(
-          mcoords, rect.xmin, rect.ymin, rect.xmax, rect.ymin, V2D_IS_CLIPPED) ||
+          mcoords, rect.xmin, rect.ymin, rect.xmax, rect.ymin, V2D_IS_CLIPPED, false) ||
       BLI_lasso_is_edge_inside(
-          mcoords, rect.xmax, rect.ymin, rect.xmax, rect.ymax, V2D_IS_CLIPPED) ||
+          mcoords, rect.xmax, rect.ymin, rect.xmax, rect.ymax, V2D_IS_CLIPPED, false) ||
       BLI_lasso_is_edge_inside(
-          mcoords, rect.xmax, rect.ymax, rect.xmin, rect.ymax, V2D_IS_CLIPPED) ||
+          mcoords, rect.xmax, rect.ymax, rect.xmin, rect.ymax, V2D_IS_CLIPPED, false) ||
       BLI_lasso_is_edge_inside(
-          mcoords, rect.xmin, rect.ymax, rect.xmin, rect.ymin, V2D_IS_CLIPPED))
+          mcoords, rect.xmin, rect.ymax, rect.xmin, rect.ymin, V2D_IS_CLIPPED, false))
   {
     return true;
   }

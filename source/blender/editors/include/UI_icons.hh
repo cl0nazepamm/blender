@@ -920,6 +920,18 @@ DEF_ICON(USER)
 DEF_ICON(EXPERIMENTAL)
 DEF_ICON(MEMORY)
 
+/* LUKE'S CUSTOM BUILD */
+DEF_ICON(OBJECT_ENCLOSE)
+DEF_ICON(FACE_TOUCH)
+DEF_ICON(EDGE_DEFAULT)
+DEF_ICON(EDGE_ENCLOSE)
+DEF_ICON(EDGE_TOUCH)
+DEF_ICON(FACE_DEFAULT)
+DEF_ICON(FACE_ENCLOSE)
+DEF_ICON(OBJECT_TOUCH)
+DEF_ICON(AUTO_XRAY)
+DEF_ICON(SELECT_THROUGH)
+
 /* The items above are initiated sequentially while the ones that
  * follow are initiated individually. Therefore this item marks
  * the boundary. Add regular SVG icons above this one. */

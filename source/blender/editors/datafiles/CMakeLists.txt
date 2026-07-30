@@ -985,6 +985,16 @@ if(WITH_BLENDER)
       zoom_out
       zoom_previous
       zoom_selected
+      object_enclose
+      face_touch
+      edge_default
+      edge_enclose
+      edge_touch
+      face_default
+      face_enclose
+      object_touch
+      auto_xray
+      select_through
     )
 
     set(SVG_CURSORS_FILENAMES_NOEXT

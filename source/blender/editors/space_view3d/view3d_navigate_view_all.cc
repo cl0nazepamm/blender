@@ -88,7 +88,8 @@ static void view3d_from_minmax(bContext *C,
                                const float min[3],
                                const float max[3],
                                bool do_zoom,
-                               const int smooth_viewtx)
+                               const int smooth_viewtx,
+                               const int view_dist)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   float afm[3];
@@ -133,6 +134,7 @@ static void view3d_from_minmax(bContext *C,
         /* Don't zoom closer than the near clipping plane. */
         const float dist_min = ED_view3d_dist_soft_min_get(v3d, true);
         CLAMP_MIN(dist_new, dist_min);
+        dist_new += view_dist;
       }
     }
   }
@@ -164,7 +166,8 @@ static void view3d_from_minmax_multi(bContext *C,
                                      const float min[3],
                                      const float max[3],
                                      const bool do_zoom,
-                                     const int smooth_viewtx)
+                                     const int smooth_viewtx,
+                                     const int view_dist)
 {
   ScrArea *area = CTX_wm_area(C);
   for (ARegion &region : area->regionbase) {
@@ -173,7 +176,7 @@ static void view3d_from_minmax_multi(bContext *C,
       /* when using all regions, don't jump out of camera view,
        * but _do_ allow locked cameras to be moved */
       if ((rv3d->persp != RV3D_CAMOB) || ED_view3d_camera_lock_check(v3d, rv3d)) {
-        view3d_from_minmax(C, v3d, &region, min, max, do_zoom, smooth_viewtx);
+        view3d_from_minmax(C, v3d, &region, min, max, do_zoom, smooth_viewtx, view_dist);
       }
     }
   }
@@ -479,10 +482,10 @@ static wmOperatorStatus view3d_all_exec(bContext *C, wmOperator *op)
 
   ED_view3d_smooth_view_undo_begin(C, area);
   if (use_all_regions) {
-    view3d_from_minmax_multi(C, v3d, min, max, true, smooth_viewtx);
+    view3d_from_minmax_multi(C, v3d, min, max, true, smooth_viewtx, 0);
   }
   else {
-    view3d_from_minmax(C, v3d, region, min, max, true, smooth_viewtx);
+    view3d_from_minmax(C, v3d, region, min, max, true, smooth_viewtx, 0);
   }
 
   ED_view3d_smooth_view_undo_end(C, area, op->type->name, false);
@@ -525,6 +528,7 @@ static wmOperatorStatus viewselected_exec(bContext *C, wmOperator *op)
   bool do_zoom = true;
   const bool use_all_regions = RNA_boolean_get(op->ptr, "use_all_regions");
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
+  const int view_dist = RNA_int_get(op->ptr, "frame_selected_distance");
 
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   const std::optional<Bounds<float3>> bounds = view3d_calc_minmax_selected(
@@ -539,10 +543,10 @@ static wmOperatorStatus viewselected_exec(bContext *C, wmOperator *op)
 
   ED_view3d_smooth_view_undo_begin(C, area);
   if (use_all_regions) {
-    view3d_from_minmax_multi(C, v3d, min, max, do_zoom, smooth_viewtx);
+    view3d_from_minmax_multi(C, v3d, min, max, do_zoom, smooth_viewtx, view_dist);
   }
   else {
-    view3d_from_minmax(C, v3d, region, min, max, do_zoom, smooth_viewtx);
+    view3d_from_minmax(C, v3d, region, min, max, do_zoom, smooth_viewtx, view_dist);
   }
 
   ED_view3d_smooth_view_undo_end(C, area, op->type->name, false);
@@ -566,6 +570,7 @@ void VIEW3D_OT_view_selected(wmOperatorType *ot)
 
   /* properties */
   view3d_operator_properties_common(ot, V3D_OP_PROP_USE_ALL_REGIONS);
+  view3d_operator_properties_common(ot, V3D_OP_PROP_FRAME_SELECTED_DISTANCE);
 }
 
 /** \} */

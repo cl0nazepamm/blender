@@ -5466,7 +5466,7 @@ static bool do_lasso_select_mesh_uv_is_edge_inside(const ARegion *region,
           &region->v2d, co_test_a, co_test_b, co_screen_a, co_screen_b) &&
       BLI_rcti_isect_segment(clip_rect, co_screen_a, co_screen_b) &&
       BLI_lasso_is_edge_inside(
-          mcoords, UNPACK2(co_screen_a), UNPACK2(co_screen_b), V2D_IS_CLIPPED))
+          mcoords, UNPACK2(co_screen_a), UNPACK2(co_screen_b), V2D_IS_CLIPPED, false))
   {
     return true;
   }

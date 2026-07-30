@@ -112,7 +112,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
     bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
     bl_label = "Options"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_ui_units_x = 12
+    bl_ui_units_x = 13
 
     def draw(self, _context):
         # layout = self.layout

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="1600"
+   viewBox="0 0 1600 1600"
+   width="1600"
+   version="1.1"
+   id="svg6614"
+   sodipodi:docname="auto_xray.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6616" />
+  <sodipodi:namedview
+     pagecolor="#303030"
+     showgrid="true"
+     id="namedview6608"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="291.32799"
+     inkscape:cy="1055.0033"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6614">
+    <inkscape:grid
+       id="grid5"
+       units="px"
+       spacingx="100"
+       spacingy="100"
+       color="#4772b3"
+       opacity="0.2"
+       visible="true" />
+  </sodipodi:namedview>
+  <path
+     d="M 300,100 H 100 V 300 H 200 V 200 h 100 z"
+     fill="#ffffff"
+     id="path2-2"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="M 500,200 H 700 V 100 H 500 Z"
+     fill="#ffffff"
+     id="path4-7-0"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 500,1400 h 200 v 100 H 500 Z"
+     fill="#ffffff"
+     id="path12-3"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 200,1400 h 100 v 100 H 100 v -200 h 100 z"
+     fill="#ffffff"
+     id="path14-9"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 200,900 v 200 H 100 V 900 Z"
+     fill="#ffffff"
+     id="path16-0"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="M 200,500 V 700 H 100 V 500 Z"
+     fill="#ffffff"
+     id="path18-9"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 1099.99,200 h -200 V 100 h 200 z"
+     fill="#ffffff"
+     id="path6"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 1369.06,200 h -69.07 V 100 h 200 v 200 h -100 v 2.87 L 892.12,701.913 c 5.1,15.094 7.87,31.266 7.87,48.084 0,2.04 -0.04,4.08 -0.1,6.1 l 500.12,200.05 v -56.15 h 100 v 200 h -100 v -36.15 l -537.26,-214.9 c -16.77,19.08 -38.3,33.88 -62.74,42.51 v 508.54 h -100 v -508.54 c -58.26,-20.59 -100,-76.15 -100,-141.46 0,-82.843 67.157,-150 150,-150 29.55,0 57.1,8.55 80.33,23.298 z"
+     fill="#ffffff"
+     id="path8"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 1399.99,500 h 100 v 200 h -100 z"
+     fill="#ffffff"
+     id="path12"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 1399.99,1400 v -100 h 100 v 200 h -200 v -100 z"
+     fill="#ffffff"
+     id="path14"
+     style="display:inline;stroke-width:100;enable-background:new" />
+  <path
+     d="m 1099.99,1500 h -200 v -100 h 200 z"
+     fill="#ffffff"
+     id="path22"
+     style="display:inline;stroke-width:100;enable-background:new" />
+</svg>

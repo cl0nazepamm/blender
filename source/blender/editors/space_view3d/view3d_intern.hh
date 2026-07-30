@@ -60,6 +60,13 @@ void VIEW3D_OT_render_border(wmOperatorType *ot);
 void VIEW3D_OT_clear_render_border(wmOperatorType *ot);
 void VIEW3D_OT_toggle_shading(wmOperatorType *ot);
 void VIEW3D_OT_toggle_xray(wmOperatorType *ot);
+void VIEW3D_OT_toggle_auto_xray(wmOperatorType *ot);
+void VIEW3D_OT_toggle_select_through(wmOperatorType *ot);
+void VIEW3D_OT_toggle_backface(wmOperatorType *ot);
+void VIEW3D_OT_toggle_facedots(wmOperatorType *ot);
+void VIEW3D_OT_cycle_object(wmOperatorType *ot);
+void VIEW3D_OT_cycle_face(wmOperatorType *ot);
+void VIEW3D_OT_cycle_edge(wmOperatorType *ot);
 
 /* `view3d_draw.cc` */
 

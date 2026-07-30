@@ -449,9 +449,126 @@ class _defs_view3d_select:
     def box():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("view3d.select_box")
-            row = layout.row()
+            row = layout.row(align=True)
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
+
+            if _context.preferences.inputs.drag_mode != 'DEFAULT':
+                inputs = _context.preferences.inputs
+                # put buttons on new row if there are too many
+                button_count = 0
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH'):
+                    button_count += 1
+                if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH'):
+                    button_count += 1
+                if button_count > 4:
+                    row = layout.row(align=True)
+                elif button_count > 0:
+                    row.separator()
+
+                if _context.mode == 'OBJECT':
+                    # object cycle
+                    if inputs.object_button == 'TOOLSETTING' or inputs.object_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object == False):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_object", text="", icon='CANCEL')
+                        else:
+                            if inputs.object_select_box == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_box == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                elif _context.mode == 'EDIT_MESH':
+                    # face cycle
+                    if inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face == False):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_face", text="", icon='CANCEL')
+                        else:
+                            if inputs.face_select_box == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_box == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_box == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                    # edge cycle
+                    if inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge == False):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_edge", text="", icon='CANCEL')
+                        else:
+                            if inputs.edge_select_box == 'EDGE_TOUCH':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                            elif inputs.edge_select_box == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_DEFAULT')
+                    # backface filter
+                    if inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface == False):
+                            sub.enabled = False
+                            sub.operator("view3d.toggle_backface", text="", icon='CANCEL')
+                        else:
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_box != 'DEFAULT')
+                    # facedot priority
+                    if inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH':
+                        sub = row.row(align=True)
+                        sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
+                # auto xray
+                if _context.mode == 'OBJECT' or _context.mode == 'EDIT_MESH':
+                    if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray == False):
+                            sub.enabled = False
+                            sub.operator("view3d.toggle_auto_xray", text="", icon='CANCEL')
+                        else:
+                            sub.operator(
+                                "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_box == 'AUTO_XRAY_BOTH' or (
+                                    _context.mode == 'OBJECT' and inputs.auto_xray_box == 'AUTO_XRAY_OBJECT') or (
+                                    _context.mode == 'EDIT_MESH' and inputs.auto_xray_box == 'AUTO_XRAY_EDIT'))
+                # select through
+                if _context.mode == 'EDIT_MESH':
+                    if inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH':
+                        sub = row.row(align=True)
+                        if inputs.drag_mode == 'SPLIT' and inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through == False):
+                            sub.enabled = False
+                            sub.operator("view3d.toggle_select_through", text="", icon='CANCEL')
+                        else:
+                            sub.operator(
+                                "view3d.toggle_select_through",
+                                text="",
+                                icon='SELECT_THROUGH',
+                                depress=inputs.select_through_box)
         return dict(
             idname="builtin.select_box",
             label="Select Box",
@@ -465,9 +582,188 @@ class _defs_view3d_select:
     def lasso():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("view3d.select_lasso")
-            row = layout.row()
+            row = layout.row(align=True)
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
+
+            if _context.preferences.inputs.drag_mode != 'DEFAULT':
+                inputs = _context.preferences.inputs
+                # put buttons on new row if there are too many
+                button_count = 0
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH'):
+                    button_count += 1
+                if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH'):
+                    button_count += 1
+                if button_count > 4:
+                    row = layout.row(align=True)
+                elif button_count > 0:
+                    row.separator()
+
+                if inputs.drag_mode == 'SPLIT':
+                    if _context.mode == 'OBJECT':
+                        # object cycle
+                        if inputs.object_button == 'TOOLSETTING' or inputs.object_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object == False):
+                                sub.enabled = False
+                                sub.operator("view3d.cycle_object", text="", icon='CANCEL')
+                            else:
+                                if inputs.object_select_lasso == 'OBJECT_ENCLOSE':
+                                    sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                                elif inputs.object_select_lasso == 'OBJECT_ORIGIN':
+                                    sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                                else:
+                                    sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                    elif _context.mode == 'EDIT_MESH':
+                        # face cycle
+                        if inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face == False):
+                                sub.enabled = False
+                                sub.operator("view3d.cycle_face", text="", icon='CANCEL')
+                            else:
+                                if inputs.face_select_lasso == 'FACE_TOUCH':
+                                    sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                                elif inputs.face_select_lasso == 'FACE_ENCLOSE':
+                                    sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                                elif inputs.face_select_lasso == 'FACE_CENTER':
+                                    sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                                else:
+                                    sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # edge cycle
+                        if inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge == False):
+                                sub.enabled = False
+                                sub.operator("view3d.cycle_edge", text="", icon='CANCEL')
+                            else:
+                                if inputs.edge_select_lasso == 'EDGE_TOUCH':
+                                    sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                                elif inputs.edge_select_lasso == 'EDGE_ENCLOSE':
+                                    sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                                else:
+                                    sub.operator("view3d.cycle_edge", text="", icon='EDGE_DEFAULT')
+                        # backface filter
+                        if inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface == False):
+                                sub.enabled = False
+                                sub.operator("view3d.toggle_backface", text="", icon='CANCEL')
+                            else:
+                                sub.operator(
+                                    "view3d.toggle_backface",
+                                    text="",
+                                    icon='NORMALS_FACE',
+                                    depress=inputs.backface_lasso != 'DEFAULT')
+                        # facedot priority
+                        if inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
+                    # auto xray
+                    if _context.mode == 'OBJECT' or _context.mode == 'EDIT_MESH':
+                        if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray == False):
+                                sub.enabled = False
+                                sub.operator("view3d.toggle_auto_xray", text="", icon='CANCEL')
+                            else:
+                                sub.operator(
+                                    "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_lasso == 'AUTO_XRAY_BOTH' or (
+                                        _context.mode == 'OBJECT' and inputs.auto_xray_lasso == 'AUTO_XRAY_OBJECT') or (
+                                        _context.mode == 'EDIT_MESH' and inputs.auto_xray_lasso == 'AUTO_XRAY_EDIT'))
+                    # select through
+                    if _context.mode == 'EDIT_MESH':
+                        if inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.drag_direction_lasso != 'ANY' and not (
+                                    inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through == False):
+                                sub.enabled = False
+                                sub.operator("view3d.toggle_select_through", text="", icon='CANCEL')
+                            else:
+                                sub.operator(
+                                    "view3d.toggle_select_through",
+                                    text="",
+                                    icon='SELECT_THROUGH',
+                                    depress=inputs.select_through_lasso)
+                else:
+                    if _context.mode == 'OBJECT':
+                        # object cycle
+                        if inputs.object_button == 'TOOLSETTING' or inputs.object_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.object_select_box == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_box == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                    elif _context.mode == 'EDIT_MESH':
+                        # face cycle
+                        if inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.face_select_box == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_box == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_box == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # edge cycle
+                        if inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.edge_select_box == 'EDGE_TOUCH':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                            elif inputs.edge_select_box == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_DEFAULT')
+                        # backface filter
+                        if inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_box != 'DEFAULT')
+                        # facedot priority
+                        if inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
+                    # auto xray
+                    if _context.mode == 'OBJECT' or _context.mode == 'EDIT_MESH':
+                        if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_box == 'AUTO_XRAY_BOTH' or (
+                                    _context.mode == 'OBJECT' and inputs.auto_xray_box == 'AUTO_XRAY_OBJECT') or (
+                                    _context.mode == 'EDIT_MESH' and inputs.auto_xray_box == 'AUTO_XRAY_EDIT'))
+                    # select through
+                    if _context.mode == 'EDIT_MESH':
+                        if inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_select_through",
+                                text="",
+                                icon='SELECT_THROUGH',
+                                depress=inputs.select_through_box)
         return dict(
             idname="builtin.select_lasso",
             label="Select Lasso",
@@ -481,10 +777,153 @@ class _defs_view3d_select:
     def circle():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("view3d.select_circle")
-            row = layout.row()
+            row = layout.row(align=True)
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
             layout.prop(props, "radius")
+            inputs = _context.preferences.inputs
+            if _context.preferences.inputs.drag_mode != 'DEFAULT':
+                inputs = _context.preferences.inputs
+                # put a separator for new buttons
+                button_count = 0
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH'):
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH'):
+                    button_count += 1
+                if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                    button_count += 1
+                if _context.mode == 'EDIT_MESH' and (
+                        inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH'):
+                    button_count += 1
+                if button_count > 0:
+                    row.separator()
+
+                if inputs.drag_mode == 'SPLIT':
+                    if _context.mode == 'OBJECT':
+                        # object cycle
+                        if inputs.object_button == 'TOOLSETTING' or inputs.object_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.object_select_circle == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_circle == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                    elif _context.mode == 'EDIT_MESH':
+                        # face cycle
+                        if inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.face_select_circle == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_circle == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_circle == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # edge cycle
+                        if inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.edge_select_circle == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                        # backface filter
+                        if inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_circle != 'DEFAULT')
+                        # facedot priority
+                        if inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
+                    # auto xray
+                    if _context.mode == 'OBJECT' or _context.mode == 'EDIT_MESH':
+                        if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_circle == 'AUTO_XRAY_BOTH' or (
+                                    _context.mode == 'OBJECT' and inputs.auto_xray_circle == 'AUTO_XRAY_OBJECT') or (
+                                    _context.mode == 'EDIT_MESH' and inputs.auto_xray_circle == 'AUTO_XRAY_EDIT'))
+                    # select through
+                    if _context.mode == 'EDIT_MESH':
+                        if inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_select_through",
+                                text="",
+                                icon='SELECT_THROUGH',
+                                depress=inputs.select_through_circle)
+                else:
+                    if _context.mode == 'OBJECT':
+                        # object cycle
+                        if inputs.object_button == 'TOOLSETTING' or inputs.object_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.object_select_box == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_box == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                    elif _context.mode == 'EDIT_MESH':
+                        # face cycle
+                        if inputs.face_button == 'TOOLSETTING' or inputs.face_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.face_select_box == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_box == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_box == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # edge cycle
+                        if inputs.edge_button == 'TOOLSETTING' or inputs.edge_button == 'BOTH':
+                            sub = row.row(align=True)
+                            if inputs.edge_select_box == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                        # backface filter
+                        if inputs.backface_button == 'TOOLSETTING' or inputs.backface_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_box != 'DEFAULT')
+                        # facedot priority
+                        if inputs.facedot_priority_button == 'TOOLSETTING' or inputs.facedot_priority_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
+                    # auto xray
+                    if _context.mode == 'OBJECT' or _context.mode == 'EDIT_MESH':
+                        if inputs.auto_xray_button == 'TOOLSETTING' or inputs.auto_xray_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_box == 'AUTO_XRAY_BOTH' or (
+                                    _context.mode == 'OBJECT' and inputs.auto_xray_box == 'AUTO_XRAY_OBJECT') or (
+                                    _context.mode == 'EDIT_MESH' and inputs.auto_xray_box == 'AUTO_XRAY_EDIT'))
+                    # select through
+                    if _context.mode == 'EDIT_MESH':
+                        if inputs.select_through_button == 'TOOLSETTING' or inputs.select_through_button == 'BOTH':
+                            sub = row.row(align=True)
+                            sub.operator(
+                                "view3d.toggle_select_through",
+                                text="",
+                                icon='SELECT_THROUGH',
+                                depress=inputs.select_through_box)
 
         def draw_cursor(_context, tool, xy):
             from gpu_extras.presets import draw_circle_2d

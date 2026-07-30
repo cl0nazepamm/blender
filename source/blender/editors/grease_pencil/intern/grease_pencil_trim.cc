@@ -48,7 +48,7 @@ static bool check_line_segment_lasso_intersection(const int2 &pos_a,
 
   /* Check the lasso bounding box first as an optimization. */
   if (bbox_ab.intersects_segment(pos_a, pos_b) &&
-      BLI_lasso_is_edge_inside(mcoords, pos_a.x, pos_a.y, pos_b.x, pos_b.y, IS_CLIPPED))
+      BLI_lasso_is_edge_inside(mcoords, pos_a.x, pos_a.y, pos_b.x, pos_b.y, IS_CLIPPED, false))
   {
     return true;
   }

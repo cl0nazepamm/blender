@@ -71,6 +71,30 @@ def register():
 
     bone_selection_sets.register()
     copy_global_transform.register()
+    bpy.types.Scene.left_pie = {}
+    bpy.types.Scene.left_pie_name = {}
+    bpy.types.Scene.left_pie_icon = {}
+    bpy.types.Scene.right_pie = {}
+    bpy.types.Scene.right_pie_name = {}
+    bpy.types.Scene.right_pie_icon = {}
+    bpy.types.Scene.down_pie = {}
+    bpy.types.Scene.down_pie_name = {}
+    bpy.types.Scene.down_pie_icon = {}
+    bpy.types.Scene.up_pie = {}
+    bpy.types.Scene.up_pie_name = {}
+    bpy.types.Scene.up_pie_icon = {}
+    bpy.types.Scene.ul_pie = {}
+    bpy.types.Scene.ul_pie_name = {}
+    bpy.types.Scene.ul_pie_icon = {}
+    bpy.types.Scene.ur_pie = {}
+    bpy.types.Scene.ur_pie_name = {}
+    bpy.types.Scene.ur_pie_icon = {}
+    bpy.types.Scene.dl_pie = {}
+    bpy.types.Scene.dl_pie_name = {}
+    bpy.types.Scene.dl_pie_icon = {}
+    bpy.types.Scene.dr_pie = {}
+    bpy.types.Scene.dr_pie_name = {}
+    bpy.types.Scene.dr_pie_icon = {}
 
 
 def unregister():
@@ -87,3 +111,27 @@ def unregister():
         for cls in reversed(mod.classes):
             if cls.is_registered:
                 unregister_class(cls)
+    del bpy.types.Scene.left_pie
+    del bpy.types.Scene.left_pie_name
+    del bpy.types.Scene.left_pie_icon
+    del bpy.types.Scene.right_pie
+    del bpy.types.Scene.right_pie_name
+    del bpy.types.Scene.right_pie_icon
+    del bpy.types.Scene.down_pie
+    del bpy.types.Scene.down_pie_name
+    del bpy.types.Scene.down_pie_icon
+    del bpy.types.Scene.up_pie
+    del bpy.types.Scene.up_pie_name
+    del bpy.types.Scene.up_pie_icon
+    del bpy.types.Scene.ul_pie
+    del bpy.types.Scene.ul_pie_name
+    del bpy.types.Scene.ul_pie_icon
+    del bpy.types.Scene.ur_pie
+    del bpy.types.Scene.ur_pie_name
+    del bpy.types.Scene.ur_pie_icon
+    del bpy.types.Scene.dl_pie
+    del bpy.types.Scene.dl_pie_name
+    del bpy.types.Scene.dl_pie_icon
+    del bpy.types.Scene.dr_pie
+    del bpy.types.Scene.dr_pie_name
+    del bpy.types.Scene.dr_pie_icon

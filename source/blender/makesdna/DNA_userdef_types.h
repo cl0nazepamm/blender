@@ -228,6 +228,38 @@ enum eUserpref_TabletAPI : short {
   USER_TABLET_WINTAB = 2,
 };
 
+/** #UserDef.mode */
+typedef enum eUserpref_Mode {
+  USER_MODE_A = 0,
+  USER_MODE_B = 1,
+  USER_MODE_C = 2,
+  USER_MODE_D = 3,
+  USER_MODE_E = 4,
+  USER_MODE_F = 5,
+  USER_MODE_G = 6,
+  USER_MODE_H = 7,
+  USER_MODE_I = 8,
+} eUserpref_Mode;
+
+/** #UserDef.cursor_types */
+typedef enum eUserpref_Cursor_Types {
+  USER_CURSOR_SYSTEM = 0,
+  USER_CURSOR_CROSS = 1,
+  USER_CURSOR_POINTER = 2,
+  USER_CURSOR_CROSS_OPEN = 3,
+  USER_CURSOR_CROSS_DOT = 4,
+  USER_CURSOR_CROSS_MIN = 5,
+  USER_CURSOR_BOX = 6,
+  USER_CURSOR_BOX_DOT = 7,
+  USER_CURSOR_BOX_POINTER = 8,
+  USER_CURSOR_DOT = 9,
+  USER_CURSOR_BLANK = 10,
+  USER_CURSOR_KNIFE = 11,
+  USER_CURSOR_PENCIL = 12,
+  USER_CURSOR_ERASER = 13,
+  USER_CURSOR_EYEDROPPER = 14,
+} eUserpref_Cursor_Types;
+
 /**
  * #UserDef.tablet_flag
  */
@@ -838,6 +870,7 @@ enum eUserPref_Section : char {
   USER_SECTION_EXTENSIONS = 17,
   USER_SECTION_DEVELOPER_TOOLS = 18,
   USER_SECTION_ASSETS = 19,
+  USER_SECTION_CUSTOM = 20,
 };
 
 /** #UserDef_SpaceData.flag (State of the user preferences UI). */
@@ -1328,6 +1361,133 @@ struct UserDef {
 
   struct WalkNavigation walk_navigation;
   struct XrNavigation xr_navigation;
+
+  /** Luke's Custom Build Options */
+  char xray_button;
+  char direction_downright_box;
+  char direction_downright_lasso;
+  char auto_xray_reset;
+  char custom_cursor;
+  char system_cursor;
+  char edit_cursor;
+  char paint_cursor;
+  char dot_cursor;
+  char knife_cursor;
+  char pencil_cursor;
+  char eraser_cursor;
+  char eyedropper_cursor;
+  char adjustable_click_select;
+  char selection_radius = 75.0f;
+  char select_unbiased;
+  char blank_text;
+  char drag_mode;
+  char drag_direction_box;
+  char drag_direction_lasso;
+  char auto_xray_box;
+  char auto_xray_downright_box;
+  char select_through_box;
+  char select_through_downright_box;
+  char object_select_box;
+  char object_select_downright_box;
+  char face_select_box;
+  char face_select_downright_box;
+  char edge_select_box;
+  char edge_select_downright_box;
+  char backface_box;
+  char backface_downright_box;
+  char auto_xray_lasso;
+  char auto_xray_downright_lasso;
+  char select_through_lasso;
+  char select_through_downright_lasso;
+  char object_select_lasso;
+  char object_select_downright_lasso;
+  char face_select_lasso;
+  char face_select_downright_lasso;
+  char edge_select_lasso;
+  char edge_select_downright_lasso;
+  char backface_lasso;
+  char backface_downright_lasso;
+  char auto_xray_circle;
+  char select_through_circle;
+  char object_select_circle;
+  char face_select_circle;
+  char edge_select_circle;
+  char backface_circle;
+  char object_button;
+  char object_cycle_touch;
+  char object_cycle_enclose;
+  char object_cycle_origin;
+  char face_button;
+  char face_cycle_default;
+  char face_cycle_touch;
+  char face_cycle_enclose;
+  char face_cycle_center;
+  char edge_button;
+  char edge_cycle_default;
+  char edge_cycle_touch;
+  char edge_cycle_enclose;
+  char backface_button;
+  char auto_xray_button;
+  char select_through_button;
+  char object_cycle_touch_circle;
+  char object_cycle_enclose_circle;
+  char object_cycle_origin_circle;
+  char face_cycle_default_circle;
+  char face_cycle_touch_circle;
+  char face_cycle_enclose_circle;
+  char face_cycle_center_circle;
+  char edge_cycle_touch_circle;
+  char edge_cycle_enclose_circle;
+  char backface_toggle_circle;
+  char auto_xray_toggle_circle;
+  char object_cycle_touch_lasso;
+  char object_cycle_enclose_lasso;
+  char object_cycle_origin_lasso;
+  char face_cycle_default_lasso;
+  char face_cycle_touch_lasso;
+  char face_cycle_enclose_lasso;
+  char face_cycle_center_lasso;
+  char edge_cycle_default_lasso;
+  char edge_cycle_touch_lasso;
+  char edge_cycle_enclose_lasso;
+  char backface_toggle_lasso;
+  char auto_xray_toggle_lasso;
+  char drag_preset_mode;
+  char operator_controls;
+  char box_controls;
+  char circle_controls;
+  char lasso_controls;
+  char backface_toggle;
+  char auto_xray_toggle;
+  char direction_controls;
+  char drag_direction_mode;
+  char direction_object;
+  char direction_face;
+  char direction_edge;
+  char direction_backface;
+  char direction_auto_xray;
+  char direction_select_through;
+  char object_operator;
+  char face_operator;
+  char edge_operator;
+  char backface_operator;
+  char auto_xray_operator;
+  char select_through_operator;
+  char sync_box;
+  char sync_circle;
+  char sync_lasso;
+  char facedot_mode;
+  char shading_button_mode;
+  char shading_cycle_wire;
+  char shading_cycle_solid;
+  char shading_cycle_material;
+  char shading_cycle_render;
+  char facedot_priority;
+  char tool_section;
+  char tool_icon[64];
+  char facedot_priority_button;
+  char drag_buttons;
+  char _pad9[5];
 
   /** The UI for the user preferences. */
   UserDef_SpaceData space_data;

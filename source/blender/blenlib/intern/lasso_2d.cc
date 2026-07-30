@@ -53,8 +53,13 @@ bool BLI_lasso_is_point_inside(const Span<int2> mcoords,
       pt, reinterpret_cast<const int (*)[2]>(mcoords.data()), uint(mcoords.size()));
 }
 
-bool BLI_lasso_is_edge_inside(
-    const Span<int2> mcoords, int x0, int y0, int x1, int y1, const int error_value)
+bool BLI_lasso_is_edge_inside(const Span<int2> mcoords,
+                              int x0,
+                              int y0,
+                              int x1,
+                              int y1,
+                              const int error_value,
+                              bool fully_inside)
 {
 
   if (x0 == error_value || x1 == error_value || mcoords.is_empty()) {
@@ -63,22 +68,31 @@ bool BLI_lasso_is_edge_inside(
 
   const int v1[2] = {x0, y0}, v2[2] = {x1, y1};
 
-  /* check points in lasso */
-  if (BLI_lasso_is_point_inside(mcoords, v1[0], v1[1], error_value)) {
-    return true;
-  }
-  if (BLI_lasso_is_point_inside(mcoords, v2[0], v2[1], error_value)) {
+  /* enclosed faces only checks for both points inside selection area */
+  if (BLI_lasso_is_point_inside(mcoords, v1[0], v1[1], error_value) &&
+      BLI_lasso_is_point_inside(mcoords, v2[0], v2[1], error_value))
+  {
     return true;
   }
 
-  /* no points in lasso, so we have to intersect with lasso edge */
-
-  if (isect_seg_seg_v2_int(mcoords[0], mcoords.last(), v1, v2) > 0) {
-    return true;
-  }
-  for (const int64_t i : mcoords.index_range().drop_back(1)) {
-    if (isect_seg_seg_v2_int(mcoords[i], mcoords[i + 1], v1, v2) > 0) {
+  if (!fully_inside) {
+    /* check points in lasso */
+    if (BLI_lasso_is_point_inside(mcoords, v1[0], v1[1], error_value)) {
       return true;
+    }
+    if (BLI_lasso_is_point_inside(mcoords, v2[0], v2[1], error_value)) {
+      return true;
+    }
+
+    /* no points in lasso, so we have to intersect with lasso edge */
+
+    if (isect_seg_seg_v2_int(mcoords[0], mcoords[mcoords.size() - 1], v1, v2) > 0) {
+      return true;
+    }
+    for (unsigned int a = 0; a < mcoords.size() - 1; a++) {
+      if (isect_seg_seg_v2_int(mcoords[a], mcoords[a + 1], v1, v2) > 0) {
+        return true;
+      }
     }
   }
 

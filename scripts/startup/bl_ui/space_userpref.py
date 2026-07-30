@@ -415,6 +415,546 @@ class USERPREF_PT_interface_menus_pie(InterfacePanel, CenterAlignMixIn, Panel):
 
 
 # -----------------------------------------------------------------------------
+# Custom Panels
+
+class CustomPanel:
+    bl_space_type = 'PREFERENCES'
+    bl_region_type = 'WINDOW'
+    bl_context = "custom"
+
+
+class USERPREF_PT_custom_presets(CustomPanel, CenterAlignMixIn, Panel):
+    # class USERPREF_PT_custom_presets(Panel):
+    bl_label = "Presets"
+
+    def draw_centered(self, context, layout):
+        inputs = context.preferences.inputs
+
+        row = layout.row(align=True)
+        row.prop(inputs, "drag_preset_mode")
+        row.operator("preferences.drag_preset")
+
+
+class USERPREF_PT_custom_drag_select(CustomPanel, CenterAlignMixIn, Panel):
+    # class USERPREF_PT_custom_drag_select(Panel):
+    bl_label = "Drag Select"
+
+    def draw_centered(self, context, layout):
+        inputs = context.preferences.inputs
+
+        row = layout.row(align=True)
+        row.prop(inputs, "drag_mode", expand=True)
+
+        if inputs.drag_mode != 'DEFAULT':
+            row = layout.row(align=True)
+            row.separator(factor=1.5)
+            row = layout.row(align=True)
+            row.prop(inputs, "facedot_priority", toggle=True)
+
+            if inputs.drag_mode == 'SPLIT':
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "direction_controls", text="Drag Direction", emboss=False)
+
+                if inputs.direction_controls:
+                    row.prop(inputs, "direction_controls", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "drag_direction_box", expand=True)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "drag_direction_lasso", expand=True)
+                    row = layout.row(align=True)
+                    sub = row.row(align=True)
+                    sub.enabled = inputs.drag_direction_box != 'ANY' or inputs.drag_direction_lasso != 'ANY'
+                    sub.prop(inputs, "drag_direction_mode", expand=True)
+                    row = layout.row(align=True)
+                    sub = row.row(align=True)
+                    sub.enabled = inputs.drag_direction_mode == 'SELECTIVE' and (
+                        inputs.drag_direction_box != 'ANY' or inputs.drag_direction_lasso != 'ANY')
+                    sub.prop(inputs, "direction_object", toggle=True)
+                    sub.prop(inputs, "direction_backface", toggle=True)
+                    row = layout.row(align=True)
+                    sub = row.row(align=True)
+                    sub.enabled = inputs.drag_direction_mode == 'SELECTIVE' and (
+                        inputs.drag_direction_box != 'ANY' or inputs.drag_direction_lasso != 'ANY')
+                    sub.prop(inputs, "direction_face", toggle=True)
+                    sub.prop(inputs, "direction_auto_xray", toggle=True)
+                    row = layout.row(align=True)
+                    sub = row.row(align=True)
+                    sub.enabled = inputs.drag_direction_mode == 'SELECTIVE' and (
+                        inputs.drag_direction_box != 'ANY' or inputs.drag_direction_lasso != 'ANY')
+                    sub.prop(inputs, "direction_edge", toggle=True)
+                    sub.prop(inputs, "direction_select_through", toggle=True)
+                else:
+                    row.prop(inputs, "direction_controls", icon='RIGHTARROW', emboss=False)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "box_controls", text="Box", emboss=False)
+
+                if inputs.box_controls:
+                    row.prop(inputs, "box_controls", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "box_controls", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+
+                    if inputs.drag_direction_box == 'LEFT_RIGHT':
+                        row.prop(inputs, "blank_text", text="Left", emboss=False)
+                        row.prop(inputs, "blank_text", text="Right", emboss=False)
+                    elif inputs.drag_direction_box == 'UP_DOWN':
+                        row.prop(inputs, "blank_text", text="Up", emboss=False)
+                        row.prop(inputs, "blank_text", text="Down", emboss=False)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "select_through_box", toggle=True)
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through):
+                        row.prop(inputs, "select_through_downright_box", toggle=True)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "auto_xray_box")
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray):
+                        row.prop(inputs, "auto_xray_downright_box")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "object_select_box")
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object):
+                        row.prop(inputs, "object_select_downright_box")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "face_select_box")
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face):
+                        row.prop(inputs, "face_select_downright_box")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "edge_select_box")
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge):
+                        row.prop(inputs, "edge_select_downright_box")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "backface_box")
+                    if inputs.drag_direction_box != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface):
+                        row.prop(inputs, "backface_downright_box")
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "circle_controls", text="Circle", emboss=False)
+
+                if inputs.circle_controls:
+                    row.prop(inputs, "circle_controls", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "circle_controls", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "select_through_circle", toggle=True)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "auto_xray_circle")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "object_select_circle")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "face_select_circle")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "edge_select_circle")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "backface_circle")
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "lasso_controls", text="Lasso", emboss=False)
+                if inputs.lasso_controls:
+                    row.prop(inputs, "lasso_controls", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "lasso_controls", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+
+                    if inputs.drag_direction_lasso == 'LEFT_RIGHT':
+                        row.prop(inputs, "blank_text", text="Left", emboss=False)
+                        row.prop(inputs, "blank_text", text="Right", emboss=False)
+                    elif inputs.drag_direction_lasso == 'UP_DOWN':
+                        row.prop(inputs, "blank_text", text="Up", emboss=False)
+                        row.prop(inputs, "blank_text", text="Down", emboss=False)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "select_through_lasso", toggle=True)
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through):
+                        row.prop(inputs, "select_through_downright_lasso", toggle=True)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "auto_xray_lasso")
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray):
+                        row.prop(inputs, "auto_xray_downright_lasso", text="")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "object_select_lasso")
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object):
+                        row.prop(inputs, "object_select_downright_lasso", text="")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "face_select_lasso")
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face):
+                        row.prop(inputs, "face_select_downright_lasso", text="")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "edge_select_lasso")
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge):
+                        row.prop(inputs, "edge_select_downright_lasso", text="")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "backface_lasso")
+                    if inputs.drag_direction_lasso != 'ANY' and (
+                            inputs.drag_direction_mode == 'EVERYTHING' or inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface):
+                        row.prop(inputs, "backface_downright_lasso", text="")
+            else:
+                row = layout.row(align=True)
+                row.prop(inputs, "select_through_box", toggle=True)
+                row = layout.row(align=True)
+                row.prop(inputs, "auto_xray_box")
+                row = layout.row(align=True)
+                row.prop(inputs, "object_select_box")
+                row = layout.row(align=True)
+                row.prop(inputs, "face_select_box")
+                row = layout.row(align=True)
+                row.prop(inputs, "edge_select_box")
+                row = layout.row(align=True)
+                row.prop(inputs, "backface_box")
+
+            row = layout.row(align=True)
+            row.separator(factor=1.5)
+            row = layout.row(align=True)
+            row.prop(inputs, "operator_controls", text="Dynamic Controls", emboss=False)
+            if inputs.operator_controls:
+                row.prop(inputs, "operator_controls", icon='DOWNARROW_HLT', emboss=False)
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "drag_buttons", text="Button Visibility", emboss=False)
+                if inputs.drag_buttons:
+                    row.prop(inputs, "drag_buttons", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "drag_buttons", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+                    row.prop(inputs, "auto_xray_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "backface_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "edge_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "face_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "facedot_priority_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "object_button")
+                    row = layout.row(align=True)
+                    row.prop(inputs, "select_through_button")
+
+                if inputs.drag_mode == 'SPLIT':
+                    row = layout.row(align=True)
+                    row.separator(factor=1.5)
+                    row = layout.row(align=True)
+                    row = layout.row(align=True, heading="Synchronize")
+                    row.prop(inputs, "sync_box", toggle=True)
+                    row.prop(inputs, "sync_circle", toggle=True)
+                    row.prop(inputs, "sync_lasso", toggle=True)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "object_operator", text="Object Style", emboss=False)
+                if inputs.object_operator:
+                    row.prop(inputs, "object_operator", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "object_operator", icon='DOWNARROW_HLT', emboss=False)
+                    box_op = inputs.drag_direction_box == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_object)
+                    lasso_op = inputs.drag_direction_lasso == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_object)
+                    box_circle_lasso = inputs.sync_box and box_op and inputs.sync_circle and inputs.sync_lasso and lasso_op
+                    box_circle = inputs.sync_box and box_op and inputs.sync_circle
+                    box_lasso = inputs.sync_box and box_op and inputs.sync_lasso and lasso_op
+                    circle_lasso = inputs.sync_circle and inputs.sync_lasso and lasso_op
+
+                    if inputs.drag_mode == 'EASY' or box_circle_lasso:
+                        row = layout.row(align=True, heading="")
+                    elif box_circle:
+                        row = layout.row(align=True, heading="Box & Circle")
+                    elif box_lasso:
+                        row = layout.row(align=True, heading="Box & Lasso")
+                    else:
+                        row = layout.row(align=True, heading="Box")
+                        row.enabled = box_op
+                    row.prop(inputs, "object_cycle_touch", toggle=True)
+                    row.prop(inputs, "object_cycle_enclose", toggle=True)
+                    row.prop(inputs, "object_cycle_origin", toggle=True)
+
+                    if inputs.drag_mode == 'SPLIT' and not box_circle_lasso:
+                        if not box_circle and not circle_lasso:
+                            row = layout.row(align=True, heading="Circle")
+                            row.prop(inputs, "object_cycle_touch_circle", toggle=True)
+                            row.prop(inputs, "object_cycle_enclose_circle", toggle=True)
+                            row.prop(inputs, "object_cycle_origin_circle", toggle=True)
+
+                        if not box_lasso:
+                            if circle_lasso:
+                                row = layout.row(align=True, heading="Lasso & Circle")
+                            else:
+                                row = layout.row(align=True, heading="Lasso")
+                                row.enabled = lasso_op
+                            row.prop(inputs, "object_cycle_touch_lasso", toggle=True)
+                            row.prop(inputs, "object_cycle_enclose_lasso", toggle=True)
+                            row.prop(inputs, "object_cycle_origin_lasso", toggle=True)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "face_operator", text="Face Style", emboss=False)
+                if inputs.face_operator:
+                    row.prop(inputs, "face_operator", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "face_operator", icon='DOWNARROW_HLT', emboss=False)
+                    box_op = inputs.drag_direction_box == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_face)
+                    lasso_op = inputs.drag_direction_lasso == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_face)
+                    box_circle_lasso = inputs.sync_box and box_op and inputs.sync_circle and inputs.sync_lasso and lasso_op
+                    box_circle = inputs.sync_box and box_op and inputs.sync_circle
+                    box_lasso = inputs.sync_box and box_op and inputs.sync_lasso and lasso_op
+                    circle_lasso = inputs.sync_circle and inputs.sync_lasso and lasso_op
+
+                    if inputs.drag_mode == 'EASY' or box_circle_lasso:
+                        row = layout.row(align=True, heading="")
+                    elif box_circle:
+                        row = layout.row(align=True, heading="Box & Circle")
+                    elif box_lasso:
+                        row = layout.row(align=True, heading="Box & Lasso")
+                    else:
+                        row = layout.row(align=True, heading="Box")
+                        row.enabled = box_op
+                    row.prop(inputs, "face_cycle_default", toggle=True)
+                    row.prop(inputs, "face_cycle_touch", toggle=True)
+                    row.prop(inputs, "face_cycle_enclose", toggle=True)
+                    row.prop(inputs, "face_cycle_center", toggle=True)
+
+                    if inputs.drag_mode == 'SPLIT' and not box_circle_lasso:
+                        if not box_circle and not circle_lasso:
+                            row = layout.row(align=True, heading="Circle")
+                            row.prop(inputs, "face_cycle_default_circle", toggle=True)
+                            row.prop(inputs, "face_cycle_touch_circle", toggle=True)
+                            row.prop(inputs, "face_cycle_enclose_circle", toggle=True)
+                            row.prop(inputs, "face_cycle_center_circle", toggle=True)
+
+                        if not box_lasso:
+                            if circle_lasso:
+                                row = layout.row(align=True, heading="Lasso & Circle")
+                            else:
+                                row = layout.row(align=True, heading="Lasso")
+                                row.enabled = lasso_op
+                            row.prop(inputs, "face_cycle_default_lasso", toggle=True)
+                            row.prop(inputs, "face_cycle_touch_lasso", toggle=True)
+                            row.prop(inputs, "face_cycle_enclose_lasso", toggle=True)
+                            row.prop(inputs, "face_cycle_center_lasso", toggle=True)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "edge_operator", text="Edge Style", emboss=False)
+                if inputs.edge_operator:
+                    row.prop(inputs, "edge_operator", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "edge_operator", icon='DOWNARROW_HLT', emboss=False)
+                    box_op = inputs.drag_direction_box == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_edge)
+                    lasso_op = inputs.drag_direction_lasso == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_edge)
+                    box_circle_lasso = inputs.sync_box and box_op and inputs.sync_circle and inputs.sync_lasso and lasso_op
+                    box_circle = inputs.sync_box and box_op and inputs.sync_circle
+                    box_lasso = inputs.sync_box and box_op and inputs.sync_lasso and lasso_op
+                    circle_lasso = inputs.sync_circle and inputs.sync_lasso and lasso_op
+
+                    if inputs.drag_mode == 'EASY' or box_circle_lasso:
+                        row = layout.row(align=True, heading="")
+                    elif box_circle:
+                        row = layout.row(align=True, heading="Box & Circle")
+                    elif box_lasso:
+                        row = layout.row(align=True, heading="Box & Lasso")
+                    else:
+                        row = layout.row(align=True, heading="Box")
+                        row.enabled = box_op
+                    row.prop(inputs, "edge_cycle_default", toggle=True)
+                    row.prop(inputs, "edge_cycle_touch", toggle=True)
+                    row.prop(inputs, "edge_cycle_enclose", toggle=True)
+
+                    if inputs.drag_mode == 'SPLIT' and not box_circle_lasso:
+                        if not box_circle and not circle_lasso:
+                            row = layout.row(align=True, heading="Circle")
+                            row.prop(inputs, "edge_cycle_touch_circle", toggle=True)
+                            row.prop(inputs, "edge_cycle_enclose_circle", toggle=True)
+
+                        if not box_lasso:
+                            if circle_lasso:
+                                row = layout.row(align=True, heading="Lasso & Circle")
+                            else:
+                                row = layout.row(align=True, heading="Lasso")
+                                row.enabled = lasso_op
+                            row.prop(inputs, "edge_cycle_default_lasso", toggle=True)
+                            row.prop(inputs, "edge_cycle_touch_lasso", toggle=True)
+                            row.prop(inputs, "edge_cycle_enclose_lasso", toggle=True)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "backface_operator", text="Backface Filter Style", emboss=False)
+                if inputs.backface_operator:
+                    row.prop(inputs, "backface_operator", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "backface_operator", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+                    box_op = inputs.drag_direction_box == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_backface)
+                    lasso_op = inputs.drag_direction_lasso == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_backface)
+                    box_circle_lasso = inputs.sync_box and box_op and inputs.sync_circle and inputs.sync_lasso and lasso_op
+                    box_circle = inputs.sync_box and box_op and inputs.sync_circle
+                    box_lasso = inputs.sync_box and box_op and inputs.sync_lasso and lasso_op
+                    circle_lasso = inputs.sync_circle and inputs.sync_lasso and lasso_op
+
+                    row = layout.row(align=True)
+                    if inputs.drag_mode == 'EASY' or box_circle_lasso:
+                        proptext = " "
+                    elif box_circle:
+                        proptext = "Box & Circle"
+                    elif box_lasso:
+                        proptext = "Box & Lasso"
+                    else:
+                        proptext = "Box"
+                        row.enabled = box_op
+                    row.prop(inputs, "backface_toggle", text=proptext)
+
+                    if inputs.drag_mode == 'SPLIT' and not box_circle_lasso:
+                        if not box_circle and not circle_lasso:
+                            row = layout.row(align=True)
+                            row.prop(inputs, "backface_toggle_circle", text="Circle")
+
+                        if not box_lasso:
+                            if circle_lasso:
+                                row = layout.row(align=True)
+                                proptext = "Lasso & Circle"
+                            else:
+                                row = layout.row(align=True)
+                                proptext = "Lasso"
+                                row.enabled = lasso_op
+                            row.prop(inputs, "backface_toggle_lasso", text=proptext)
+
+                row = layout.row(align=True)
+                row.separator(factor=1.5)
+                row = layout.row(align=True)
+                row.prop(inputs, "auto_xray_operator", text="Auto X-Ray Toggle", emboss=False)
+                if inputs.auto_xray_operator:
+                    row.prop(inputs, "auto_xray_operator", icon='RIGHTARROW', emboss=False)
+                else:
+                    row.prop(inputs, "auto_xray_operator", icon='DOWNARROW_HLT', emboss=False)
+                    row = layout.row(align=True)
+                    box_op = inputs.drag_direction_box == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_auto_xray)
+                    lasso_op = inputs.drag_direction_lasso == 'ANY' or (
+                        inputs.drag_direction_mode == 'SELECTIVE' and not inputs.direction_auto_xray)
+                    box_circle_lasso = inputs.sync_box and box_op and inputs.sync_circle and inputs.sync_lasso and lasso_op
+                    box_circle = inputs.sync_box and box_op and inputs.sync_circle
+                    box_lasso = inputs.sync_box and box_op and inputs.sync_lasso and lasso_op
+                    circle_lasso = inputs.sync_circle and inputs.sync_lasso and lasso_op
+
+                    row = layout.row(align=True)
+                    if inputs.drag_mode == 'EASY' or box_circle_lasso:
+                        proptext = " "
+                    elif box_circle:
+                        proptext = "Box & Circle"
+                    elif box_lasso:
+                        proptext = "Box & Lasso"
+                    else:
+                        proptext = "Box"
+                        row.enabled = box_op
+                    row.prop(inputs, "auto_xray_toggle", text=proptext)
+
+                    if inputs.drag_mode == 'SPLIT' and not box_circle_lasso:
+                        if not box_circle and not circle_lasso:
+                            row = layout.row(align=True)
+                            row.prop(inputs, "auto_xray_toggle_circle", text="Circle")
+
+                        if not box_lasso:
+                            if circle_lasso:
+                                row = layout.row(align=True)
+                                proptext = "Lasso & Circle"
+                            else:
+                                row = layout.row(align=True)
+                                proptext = "Lasso"
+                                row.enabled = lasso_op
+                            row.prop(inputs, "auto_xray_toggle_lasso", text=proptext)
+            else:
+                row.prop(inputs, "operator_controls", icon='RIGHTARROW', emboss=False)
+
+
+class USERPREF_PT_custom_mouse(CustomPanel, CenterAlignMixIn, Panel):
+    # class USERPREF_PT_custom_mouse(Panel):
+    bl_label = "Mouse"
+
+    def draw_centered(self, context, layout):
+        inputs = context.preferences.inputs
+
+        row = layout.row(align=True)
+        row.prop(inputs, "adjustable_click_select")
+        if inputs.adjustable_click_select == 'CUSTOM':
+            row.prop(inputs, "selection_radius")
+            row = layout.row(align=True)
+            row.prop(inputs, "select_unbiased", toggle=True)
+        row = layout.row(align=True)
+        row.separator(factor=1.5)
+        row = layout.row(align=True)
+        row.prop(inputs, "custom_cursor")
+        if inputs.custom_cursor == 'CUSTOM':
+            row.operator("preferences.reset_cursors")
+            row = layout.row(align=True)
+            row.prop(inputs, "system_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "edit_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "paint_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "dot_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "knife_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "pencil_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "eraser_cursor")
+            row = layout.row(align=True)
+            row.prop(inputs, "eyedropper_cursor")
+
+
+class USERPREF_PT_custom_visual(CustomPanel, CenterAlignMixIn, Panel):
+    # class USERPREF_PT_custom_visual(Panel):
+    bl_label = "Visual"
+
+    def draw_centered(self, context, layout):
+        inputs = context.preferences.inputs
+
+        row = layout.row(align=True)
+        row.prop(inputs, "facedot_mode", expand=True)
+        row = layout.row(align=True)
+        row.separator(factor=1.5)
+        row = layout.row(align=True)
+        row.prop(inputs, "shading_button_mode")
+        if inputs.shading_button_mode == 'CYCLE':
+            row.prop(inputs, "shading_cycle_wire", icon='SHADING_WIRE', toggle=True)
+            row.prop(inputs, "shading_cycle_solid", icon='SHADING_SOLID', toggle=True)
+            row.prop(inputs, "shading_cycle_material", icon='SHADING_TEXTURE', toggle=True)
+            row.prop(inputs, "shading_cycle_render", icon='SHADING_RENDERED', toggle=True)
+        row = layout.row(align=True)
+        row.separator(factor=1.5)
+        row = layout.row(align=True)
+        row.enabled = inputs.shading_button_mode != 'XRAY_COMBINE'
+        row.prop(inputs, "xray_button", expand=True)
+
+
+# -----------------------------------------------------------------------------
 # Editing Panels
 
 class EditingPanel:
@@ -3114,6 +3654,11 @@ classes = (
     USERPREF_MT_editor_menus,
     USERPREF_MT_view,
     USERPREF_MT_save_load,
+
+    USERPREF_PT_custom_presets,
+    USERPREF_PT_custom_drag_select,
+    USERPREF_PT_custom_mouse,
+    USERPREF_PT_custom_visual,
 
     USERPREF_PT_interface_display,
     USERPREF_PT_interface_editors,

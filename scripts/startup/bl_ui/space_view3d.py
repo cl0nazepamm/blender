@@ -870,6 +870,7 @@ class VIEW3D_HT_header(Header):
         layout = self.layout
 
         tool_settings = context.tool_settings
+        inputs = context.preferences.inputs
         view = context.space_data
         shading = view.shading
 
@@ -901,7 +902,178 @@ class VIEW3D_HT_header(Header):
         )
         del act_mode_item
 
-        layout.template_header_3D_mode()
+        row = layout.row(align=True)
+        row.template_header_3D_mode()
+
+        if inputs.drag_mode != 'DEFAULT':
+            if object_mode == 'OBJECT' or object_mode == 'EDIT':
+                from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+                _cls = ToolSelectPanelHelper._tool_class_from_space_type('VIEW_3D')
+
+                if tool_settings.workspace_tool_type == 'FALLBACK':
+                    tool = _cls._tool_get_by_id_active(context, _cls.tool_fallback_id)[0].idname
+                else:
+                    tool = ToolSelectPanelHelper.tool_active_from_context(context).idname
+
+                if object_mode == 'OBJECT':
+                    # object cycle
+                    if inputs.object_button == 'HEADER' or inputs.object_button == 'BOTH':
+                        sub = row.row(align=True)
+                        # disable button if set to drag direction
+                        if (
+                            (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                                    inputs.drag_direction_lasso != 'ANY' and not (
+                                        inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object == False))) or (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                                    inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_object == False)))):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_object", text="", icon='CANCEL')
+                        # circle
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                            if inputs.object_select_circle == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_circle == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                        # lasso
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                            if inputs.object_select_lasso == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_lasso == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                        # box / easy
+                        else:
+                            if inputs.object_select_box == 'OBJECT_ENCLOSE':
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_ENCLOSE')
+                            elif inputs.object_select_box == 'OBJECT_ORIGIN':
+                                sub.operator("view3d.cycle_object", text="", icon='LIGHTPROBE_SPHERE')
+                            else:
+                                sub.operator("view3d.cycle_object", text="", icon='OBJECT_TOUCH')
+                else:
+                    # face cycle
+                    if inputs.face_button == 'HEADER' or inputs.face_button == 'BOTH':
+                        sub = row.row(align=True)
+                        # disable button if set to drag direction
+                        if (
+                            (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                                    inputs.drag_direction_lasso != 'ANY' and not (
+                                        inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face == False))) or (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                                    inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_face == False)))):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_face", text="", icon='CANCEL')
+                        # circle
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                            if inputs.face_select_circle == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_circle == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_circle == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # lasso
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                            if inputs.face_select_lasso == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_lasso == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_lasso == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                        # box / easy
+                        else:
+                            if inputs.face_select_box == 'FACE_TOUCH':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_TOUCH')
+                            elif inputs.face_select_box == 'FACE_ENCLOSE':
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_ENCLOSE')
+                            elif inputs.face_select_box == 'FACE_CENTER':
+                                sub.operator("view3d.cycle_face", text="", icon='LIGHTPROBE_PLANE')
+                            else:
+                                sub.operator("view3d.cycle_face", text="", icon='FACE_DEFAULT')
+                    # edge cycle
+                    if inputs.edge_button == 'HEADER' or inputs.edge_button == 'BOTH':
+                        sub = row.row(align=True)
+                        # disable button if set to drag direction
+                        if (
+                            (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                                    inputs.drag_direction_lasso != 'ANY' and not (
+                                        inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge == False))) or (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                                    inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_edge == False)))):
+                            sub.enabled = False
+                            sub.operator("view3d.cycle_edge", text="", icon='CANCEL')
+                        # circle
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                            if inputs.edge_select_circle == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                        # lasso
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                            if inputs.edge_select_lasso == 'EDGE_TOUCH':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                            elif inputs.edge_select_lasso == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_DEFAULT')
+                        # box / easy
+                        else:
+                            if inputs.edge_select_box == 'EDGE_TOUCH':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_TOUCH')
+                            elif inputs.edge_select_box == 'EDGE_ENCLOSE':
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_ENCLOSE')
+                            else:
+                                sub.operator("view3d.cycle_edge", text="", icon='EDGE_DEFAULT')
+                    # backface filter
+                    if inputs.backface_button == 'HEADER' or inputs.backface_button == 'BOTH':
+                        sub = row.row(align=True)
+                        # disable button if set to drag direction
+                        if (
+                            (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                                    inputs.drag_direction_lasso != 'ANY' and not (
+                                        inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface == False))) or (
+                                inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                                    inputs.drag_direction_box != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_backface == False)))):
+                            sub.enabled = False
+                            sub.operator("view3d.toggle_backface", text="", icon='CANCEL')
+                        # circle
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_circle != 'DEFAULT')
+                        # lasso
+                        elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_lasso != 'DEFAULT')
+                        # box / easy
+                        else:
+                            sub.operator(
+                                "view3d.toggle_backface",
+                                text="",
+                                icon='NORMALS_FACE',
+                                depress=inputs.backface_box != 'DEFAULT')
+                    # facedot priority
+                    if inputs.facedot_priority_button == 'HEADER' or inputs.facedot_priority_button == 'BOTH':
+                        sub = row.row(align=True)
+                        sub.prop(inputs, "facedot_priority", text="", icon='PIVOT_BOUNDBOX')
 
         # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode...
         if obj:
@@ -1151,13 +1323,108 @@ class VIEW3D_HT_header(Header):
         ):
             sub.popover(panel="VIEW3D_PT_overlay_bones", text="", icon='POSE_HLT')
 
-        row = layout.row()
-        row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
-
-        _toggle_xray_operator(row, context, text="")
-
         row = layout.row(align=True)
-        row.prop(shading, "type", text="", expand=True)
+        # auto xray
+        if (object_mode == 'EDIT' or object_mode == 'OBJECT') and inputs.drag_mode != 'DEFAULT':
+            if inputs.auto_xray_button == 'HEADER' or inputs.auto_xray_button == 'BOTH':
+                sub = row.row(align=True)
+                # disable button if set to drag direction
+                if (
+                    (
+                        inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                            inputs.drag_direction_lasso != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray == False))) or (
+                        inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                        inputs.drag_direction_box != 'ANY' and not (
+                            inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_auto_xray == False)))):
+                    sub.enabled = False
+                    sub.operator("view3d.toggle_auto_xray", text="", icon='CANCEL')
+                # circle
+                elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                    sub.operator(
+                        "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_circle == 'AUTO_XRAY_BOTH' or (
+                            object_mode == 'OBJECT' and inputs.auto_xray_circle == 'AUTO_XRAY_OBJECT') or (
+                            object_mode == 'EDIT' and inputs.auto_xray_circle == 'AUTO_XRAY_EDIT'))
+                # lasso
+                elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                    sub.operator(
+                        "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_lasso == 'AUTO_XRAY_BOTH' or (
+                            object_mode == 'OBJECT' and inputs.auto_xray_lasso == 'AUTO_XRAY_OBJECT') or (
+                            object_mode == 'EDIT' and inputs.auto_xray_lasso == 'AUTO_XRAY_EDIT'))
+                # box / easy
+                else:
+                    sub.operator(
+                        "view3d.toggle_auto_xray", text="", icon='AUTO_XRAY', depress=inputs.auto_xray_box == 'AUTO_XRAY_BOTH' or (
+                            object_mode == 'OBJECT' and inputs.auto_xray_box == 'AUTO_XRAY_OBJECT') or (
+                            object_mode == 'EDIT' and inputs.auto_xray_box == 'AUTO_XRAY_EDIT'))
+            if object_mode == 'OBJECT':
+                del tool
+        # select through
+        if object_mode == 'EDIT' and inputs.drag_mode != 'DEFAULT':
+            if inputs.select_through_button == 'HEADER' or inputs.select_through_button == 'BOTH':
+                sub = row.row(align=True)
+                # disable button if set to drag direction
+                if (
+                    (
+                        inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso" and (
+                            inputs.drag_direction_lasso != 'ANY' and not (
+                                inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through == False))) or (
+                        inputs.drag_mode == 'SPLIT' and tool == "builtin.select_box" and (
+                        inputs.drag_direction_box != 'ANY' and not (
+                            inputs.drag_direction_mode == 'SELECTIVE' and inputs.direction_select_through == False)))):
+                    sub.enabled = False
+                    sub.operator("view3d.toggle_select_through", text="", icon='CANCEL')
+                # circle
+                elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_circle":
+                    sub.operator(
+                        "view3d.toggle_select_through",
+                        text="",
+                        icon='SELECT_THROUGH',
+                        depress=inputs.select_through_circle)
+                # lasso
+                elif inputs.drag_mode == 'SPLIT' and tool == "builtin.select_lasso":
+                    sub.operator(
+                        "view3d.toggle_select_through",
+                        text="",
+                        icon='SELECT_THROUGH',
+                        depress=inputs.select_through_lasso)
+                # box / easy
+                else:
+                    sub.operator(
+                        "view3d.toggle_select_through",
+                        text="",
+                        icon='SELECT_THROUGH',
+                        depress=inputs.select_through_box)
+            del tool
+
+        # Hmm...
+        # row = layout.row()
+        if inputs.xray_button != 'HIDE' and inputs.shading_button_mode != 'XRAY_COMBINE':
+            row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
+            _toggle_xray_operator(row, context, text="")
+
+        if not (
+            (inputs.shading_button_mode == 'XRAY_COMBINE' or inputs.xray_button == 'HIDE') and not (
+                object_mode == 'EDIT' and (
+                    inputs.select_through_button == 'HEADER' or inputs.select_through_button == 'BOTH')) and not (
+                inputs.auto_xray_button == 'HEADER' or inputs.auto_xray_button == 'BOTH')):
+            row = layout.row(align=True)
+
+        if inputs.shading_button_mode != 'DEFAULT':
+            if shading.type == 'SOLID':
+                shadicon = 'SHADING_SOLID'
+            elif shading.type == 'MATERIAL':
+                shadicon = 'SHADING_TEXTURE'
+            elif shading.type == 'RENDERED':
+                shadicon = 'SHADING_RENDERED'
+            else:
+                shadicon = 'SHADING_WIRE'
+            if inputs.shading_button_mode == 'XRAY_COMBINE':
+                row.operator("view3d.toggle_xray", text="", icon=shadicon, depress=draw_depressed)
+            else:
+                row.operator("view3d.cycle_shading", text="", icon=shadicon)
+        else:
+            row.prop(shading, "type", text="", expand=True)
         sub = row.row(align=True)
         # TODO, currently render shading type ignores mesh two-side, until it's supported
         # show the shading popover which shows double-sided option.
@@ -6988,6 +7255,61 @@ class VIEW3D_PT_shading_options(Panel):
             row = col.row()
             row.active = not xray_active
             row.prop(shading, "use_dof", text="Depth of Field")
+        else:
+            if shading.type == 'WIREFRAME':
+                row.prop(shading, "show_xray_wireframe", text="")
+                sub = row.row()
+                sub.active = shading.show_xray_wireframe
+                sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
+            elif shading.type == 'SOLID':
+                row.prop(shading, "show_xray", text="")
+                sub = row.row()
+                sub.active = shading.show_xray
+                sub.prop(shading, "xray_alpha", text="X-Ray")
+                # X-ray mode is off when alpha is 1.0
+                xray_active = shading.show_xray and shading.xray_alpha != 1
+
+                row = col.row(align=True)
+                row.prop(shading, "show_shadows", text="")
+                row.active = not xray_active
+                sub = row.row(align=True)
+                sub.active = shading.show_shadows
+                sub.prop(shading, "shadow_intensity", text="Shadow")
+                sub.popover(
+                    panel="VIEW3D_PT_shading_options_shadow",
+                    icon='PREFERENCES',
+                    text="",
+                )
+
+                col = layout.column()
+
+                row = col.row()
+                row.active = not xray_active
+                row.prop(shading, "show_cavity")
+
+                if shading.show_cavity and not xray_active:
+                    row.prop(shading, "cavity_type", text="Type")
+
+                    if shading.cavity_type in {'WORLD', 'BOTH'}:
+                        col.label(text="World Space")
+                        sub = col.row(align=True)
+                        sub.prop(shading, "cavity_ridge_factor", text="Ridge")
+                        sub.prop(shading, "cavity_valley_factor", text="Valley")
+                        sub.popover(
+                            panel="VIEW3D_PT_shading_options_ssao",
+                            icon='PREFERENCES',
+                            text="",
+                        )
+
+                    if shading.cavity_type in {'SCREEN', 'BOTH'}:
+                        col.label(text="Screen Space")
+                        sub = col.row(align=True)
+                        sub.prop(shading, "curvature_ridge_factor", text="Ridge")
+                        sub.prop(shading, "curvature_valley_factor", text="Valley")
+
+                row = col.row()
+                row.active = not xray_active
+                row.prop(shading, "use_dof", text="Depth of Field")
 
 
 class VIEW3D_PT_shading_options_shadow(Panel):
@@ -7442,6 +7764,21 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
 
         is_any_solid_shading = not (shading.show_xray or (shading.type == 'WIREFRAME'))
 
+        if shading.type == 'WIREFRAME':
+            xray = shading.show_xray_wireframe and shading.xray_alpha_wireframe < 1.0
+        elif shading.type == 'SOLID':
+            xray = shading.show_xray and shading.xray_alpha < 1.0
+        else:
+            xray = False
+
+        if xray:
+            fdot_draw_depressed = not overlay.show_face_center_xray
+        else:
+            fdot_draw_depressed = overlay.show_face_center
+
+        col = layout.column()
+        col.active = display_all
+
         col = layout.column()
         col.active = display_all
 
@@ -7464,8 +7801,7 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         sub = split.column()
         sub.prop(overlay, "show_faces", text="Faces")
         sub = split.column()
-        sub.active = is_any_solid_shading
-        sub.prop(overlay, "show_face_center", text="Center")
+        sub.operator("view3d.toggle_facedots", text="Facedots", depress=fdot_draw_depressed)
 
         col.prop(overlay, "show_extra_indices", text="Indices")
 

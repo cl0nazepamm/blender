@@ -720,6 +720,7 @@ HCURSOR GHOST_WindowWin32::getStandardCursor(GHOST_TStandardCursor shape) const
 {
   /* Convert GHOST cursor to Windows OEM cursor. */
   HANDLE cursor = nullptr;
+  HMODULE module = ::GetModuleHandle(0);
   uint32_t flags = LR_SHARED | LR_DEFAULTSIZE;
   int cx = 0, cy = 0;
 
@@ -760,6 +761,36 @@ HCURSOR GHOST_WindowWin32::getStandardCursor(GHOST_TStandardCursor shape) const
       break;
     case GHOST_kStandardCursorDefault:
       cursor = nullptr;
+      break;
+    case GHOST_kStandardCursorBlank:
+      cursor = ::LoadImage(module, "blank_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorBox:
+      cursor = ::LoadImage(module, "box_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorBoxDot:
+      cursor = ::LoadImage(module, "boxDot_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorBoxPointer:
+      cursor = ::LoadImage(module, "boxPointer_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorCross:
+      cursor = ::LoadImage(module, "cross_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorCrossDot:
+      cursor = ::LoadImage(module, "crossDot_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorCrossMin:
+      cursor = ::LoadImage(module, "crossMin_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorCrossOpen:
+      cursor = ::LoadImage(module, "crossOpen_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorDot:
+      cursor = ::LoadImage(module, "dot_cursor", IMAGE_CURSOR, cx, cy, flags);
+      break;
+    case GHOST_kStandardCursorPointer:
+      cursor = ::LoadImage(module, "pointer_cursor", IMAGE_CURSOR, cx, cy, flags);
       break;
     default:
       return nullptr;

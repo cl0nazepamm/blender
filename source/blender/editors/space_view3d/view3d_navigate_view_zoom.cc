@@ -421,7 +421,8 @@ static void view_zoom_apply_step(bContext *C,
                                  ScrArea *area,
                                  ARegion *region,
                                  const int delta,
-                                 const int zoom_xy[2])
+                                 const int zoom_xy[2],
+                                 const float zoom_speed)
 {
   View3D *v3d = area->spacedata.first_as<View3D>();
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
@@ -433,7 +434,7 @@ static void view_zoom_apply_step(bContext *C,
   const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(v3d, false);
 
   if (delta < 0) {
-    const float step = 1.2f;
+    const float step = zoom_speed;
     if (use_cam_zoom) {
       view_zoom_to_window_xy_camera(scene, depsgraph, v3d, region, step, zoom_xy);
     }
@@ -444,7 +445,7 @@ static void view_zoom_apply_step(bContext *C,
     }
   }
   else {
-    const float step = 1.0f / 1.2f;
+    const float step = 1.0f / zoom_speed;
     if (use_cam_zoom) {
       view_zoom_to_window_xy_camera(scene, depsgraph, v3d, region, step, zoom_xy);
     }
@@ -477,6 +478,7 @@ static wmOperatorStatus viewzoom_exec(bContext *C, wmOperator *op)
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
 
   const int delta = RNA_int_get(op->ptr, "delta");
+  const float zoom_speed = RNA_float_get(op->ptr, "zoom_speed");
   const bool use_cursor_init = RNA_boolean_get(op->ptr, "use_cursor_init");
 
   int zoom_xy_buf[2];
@@ -490,7 +492,7 @@ static wmOperatorStatus viewzoom_exec(bContext *C, wmOperator *op)
     zoom_xy = zoom_xy_buf;
   }
 
-  view_zoom_apply_step(C, depsgraph, scene, area, region, delta, zoom_xy);
+  view_zoom_apply_step(C, depsgraph, scene, area, region, delta, zoom_xy, zoom_speed);
   ED_view3d_camera_lock_undo_grouped_push(op->type->name, v3d, rv3d, C);
 
   return OPERATOR_FINISHED;
@@ -512,6 +514,7 @@ static wmOperatorStatus viewzoom_invoke_impl(bContext *C,
 
   prop = RNA_struct_find_property(ptr, "delta");
   const int delta = RNA_property_is_set(ptr, prop) ? RNA_property_int_get(ptr, prop) : 0;
+  const float zoom_speed = RNA_float_get(ptr, "zoom_speed");
 
   if (delta) {
     const bool do_zoom_to_mouse_pos = (vod->viewops_flag & VIEWOPS_FLAG_ZOOM_TO_MOUSE) != 0;
@@ -521,7 +524,8 @@ static wmOperatorStatus viewzoom_invoke_impl(bContext *C,
                          vod->area,
                          vod->region,
                          delta,
-                         do_zoom_to_mouse_pos ? xy : nullptr);
+                         do_zoom_to_mouse_pos ? xy : nullptr,
+                         zoom_speed);
 
     return OPERATOR_FINISHED;
   }
@@ -575,8 +579,9 @@ void VIEW3D_OT_zoom(wmOperatorType *ot)
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY;
 
   /* properties */
-  view3d_operator_properties_common(
-      ot, V3D_OP_PROP_DELTA | V3D_OP_PROP_MOUSE_CO | V3D_OP_PROP_USE_MOUSE_INIT);
+  view3d_operator_properties_common(ot,
+                                    V3D_OP_PROP_DELTA | V3D_OP_PROP_MOUSE_CO |
+                                        V3D_OP_PROP_USE_MOUSE_INIT | V3D_OP_PROP_ZOOM_SPEED);
 }
 
 /** \} */

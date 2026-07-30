@@ -295,7 +295,46 @@ int WM_event_drag_direction(const wmEvent *event)
       event->xy[1] - event->prev_press_xy[1],
   };
 
-  int theta = round_fl_to_int(4.0f * atan2f(float(delta[1]), float(delta[0])) / float(M_PI));
+  if (U.drag_mode == 2) {
+    const bool box_left_right = U.drag_direction_box == 1 && U.drag_mode == 2;
+    const bool box_up_down = U.drag_direction_box == 2 && U.drag_mode == 2;
+    const bool lasso_left_right = U.drag_direction_lasso == 1 && U.drag_mode == 2;
+    const bool lasso_up_down = U.drag_direction_lasso == 2 && U.drag_mode == 2;
+
+    if (U.direction_downright_box) {
+      U.direction_downright_box ^= true;
+    }
+
+    if (U.direction_downright_lasso) {
+      U.direction_downright_lasso ^= true;
+    }
+
+    if (box_left_right || box_up_down || lasso_left_right || lasso_up_down) {
+      const float thetaf = 4.0f * atan2f((float)delta[1], (float)delta[0]) / (float)M_PI;
+
+      if (thetaf > -2.0f && thetaf < 2.0f) {
+        if (box_left_right) {
+          U.direction_downright_box ^= true;
+        }
+
+        if (lasso_left_right) {
+          U.direction_downright_lasso ^= true;
+        }
+      }
+
+      if (thetaf < 0.0f) {
+        if (box_up_down) {
+          U.direction_downright_box ^= true;
+        }
+
+        if (lasso_up_down) {
+          U.direction_downright_lasso ^= true;
+        }
+      }
+    }
+  }
+
+  const int theta = round_fl_to_int(4.0f * atan2f((float)delta[1], (float)delta[0]) / (float)M_PI);
   int val = KM_DIRECTION_W;
 
   if (theta == 0) {

@@ -448,6 +448,16 @@ enum GHOST_TStandardCursor {
   GHOST_kStandardCursorBlade,
   GHOST_kStandardCursorSlip,
   GHOST_kStandardCursorCustom,
+  GHOST_kStandardCursorBlank,
+  GHOST_kStandardCursorBox,
+  GHOST_kStandardCursorBoxDot,
+  GHOST_kStandardCursorBoxPointer,
+  GHOST_kStandardCursorCross,
+  GHOST_kStandardCursorCrossDot,
+  GHOST_kStandardCursorCrossMin,
+  GHOST_kStandardCursorCrossOpen,
+  GHOST_kStandardCursorDot,
+  GHOST_kStandardCursorPointer,
 
 #define GHOST_kStandardCursorNumCursors (int(GHOST_kStandardCursorCustom) + 1)
 };

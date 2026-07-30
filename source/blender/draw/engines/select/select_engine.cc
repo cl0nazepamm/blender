@@ -497,7 +497,9 @@ struct Instance : public DrawEngine {
   {
     if (select_mode & SCE_SELECT_FACE) {
       if ((dt < OB_SOLID) || XRAY_FLAG_ENABLED(v3d)) {
-        return true;
+        if (!(v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT_XRAY)) {
+          return true;
+        }
       }
       if (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) {
         return true;

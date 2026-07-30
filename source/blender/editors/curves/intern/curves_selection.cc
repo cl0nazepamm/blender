@@ -1110,7 +1110,8 @@ bool select_lasso(const ViewContext &vc,
                                                int(pos1_proj.y),
                                                int(pos2_proj.x),
                                                int(pos2_proj.y),
-                                               IS_CLIPPED))
+                                               IS_CLIPPED,
+                                               false))
                   {
                     for (bke::GSpanAttributeWriter &selection : selection_writers) {
                       apply_selection_operation_at_index(selection.span, curve, sel_op);
@@ -1421,7 +1422,8 @@ IndexMask select_lasso_mask(const ViewContext &vc,
                                     int(pos_proj.y),
                                     int(next_pos_proj.x),
                                     int(next_pos_proj.y),
-                                    IS_CLIPPED);
+                                    IS_CLIPPED,
+                                    false);
   };
 
   const IndexMask &mask = (attribute_name == ".selection") ? selection_mask : bezier_mask;

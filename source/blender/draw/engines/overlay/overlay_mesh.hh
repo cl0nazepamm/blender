@@ -112,7 +112,13 @@ class Meshes : Overlay {
     select_vert_ = (tsettings->selectmode & SCE_SELECT_VERTEX);
     select_edge_ = (tsettings->selectmode & SCE_SELECT_EDGE);
     select_face_ = (tsettings->selectmode & SCE_SELECT_FACE);
+    /*
     select_face_dots_ = ((edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) || state.xray_flag_enabled) &
+                        select_face_;
+                        */
+
+    select_face_dots_ = ((!xray_flag_enabled_ && (edit_flag & V3D_OVERLAY_EDIT_FACE_DOT)) ||
+                         (xray_flag_enabled_ && !(edit_flag & V3D_OVERLAY_EDIT_FACE_DOT_XRAY))) &
                         select_face_;
 
     show_retopology_ = (edit_flag & V3D_OVERLAY_EDIT_RETOPOLOGY) && !state.xray_enabled;

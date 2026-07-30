@@ -20,6 +20,7 @@ bool BLI_lasso_is_point_inside(Span<int2> mcoords, int sx, int sy, int error_val
 /**
  * Edge version for lasso select. We assume bound-box check was done.
  */
-bool BLI_lasso_is_edge_inside(Span<int2> mcoords, int x0, int y0, int x1, int y1, int error_value);
+bool BLI_lasso_is_edge_inside(
+    Span<int2> mcoords, int x0, int y0, int x1, int y1, int error_value, bool fully_inside);
 
 }  // namespace blender

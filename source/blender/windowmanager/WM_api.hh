@@ -1204,6 +1204,7 @@ wmOperatorStatus WM_operator_call_notest(bContext *C, wmOperator *op);
  * Execute this operator again, put here so it can share above code
  */
 wmOperatorStatus WM_operator_repeat(bContext *C, wmOperator *op);
+wmOperatorStatus WM_operator_invoke_last(bContext *C, wmOperator *op);
 wmOperatorStatus WM_operator_repeat_last(bContext *C, wmOperator *op);
 /**
  * \return true if #WM_operator_repeat can run.
